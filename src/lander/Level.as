@@ -30,6 +30,7 @@ package lander {
 		private var textFormat2:TextFormat; 
 		
 		public function Level() {
+			trace("Testing git");
 			//initialize variables
 			marsLander = new MarsLander(); 
 			marsLander.x = LANDER_START.x; 

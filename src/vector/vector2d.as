@@ -48,5 +48,13 @@ package vector{
 		public function magnitude():Number {
 			return Math.sqrt(_x*_x + _y*_y); 
 		}
+		
+		public function toXML():XML {
+			var xml:XML = new XML(<vector2d />);
+			xml.@x = _x; 
+			xml.@y = _y; 
+			
+			return xml; 
+		}
 	}
 }

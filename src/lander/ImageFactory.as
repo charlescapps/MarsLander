@@ -34,7 +34,7 @@ package lander {
 			return landerThrustImage;
 		}
 		
-		public function toString() {
+		public function toString():String {
 			return "Image factory exists!";
 		}
 		

@@ -3,6 +3,7 @@ package lander{
 	import vector.*;
 	import flash.events.KeyboardEvent;
 	import flash.events.Event;
+	import flash.ui.Keyboard; 
 	
 	/**
 	 * @author charles
@@ -97,11 +98,11 @@ package lander{
 		
 		private function keyDown(evt:KeyboardEvent):void {
 			switch(evt.keyCode) {
-				case (Constants.UP_CODE): 
+				case (Keyboard.UP): 
 					startThrusting(); break; 
-				case (Constants.LEFT_CODE):
+				case (Keyboard.LEFT):
 					isRotatingCCW = true; break;
-				case (Constants.RIGHT_CODE): 
+				case (Keyboard.RIGHT): 
 					isRotatingCW = true; break; 
 			}
 				
@@ -109,11 +110,11 @@ package lander{
 		
 		private function keyUp(evt:KeyboardEvent):void {
 			switch (evt.keyCode) {
-				case (Constants.UP_CODE):
+				case (Keyboard.UP):
 					stopThrusting(); break; 
-				case (Constants.LEFT_CODE): 
+				case (Keyboard.LEFT): 
 					isRotatingCCW = false; break ;
-				case (Constants.RIGHT_CODE): 
+				case (Keyboard.RIGHT): 
 					isRotatingCW = false; break; 
 			}
 		}
@@ -124,9 +125,9 @@ package lander{
 			if (isThrusting)
 				thrust();
 			if (isRotatingCW)
-				rotation += ROTATIONAL_THRUST; 
+				rotateClockwise();
 			else if (isRotatingCCW) 
-				rotation -= ROTATIONAL_THRUST;
+				rotateCounterclockwise();
 				
 			//update position
 			move();

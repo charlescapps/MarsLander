@@ -7,8 +7,9 @@ package levelMaker {
 	import flash.text.TextField; 
 	import flash.text.TextFormat;
 	import flash.text.TextFieldAutoSize; 
-	import flash.text.TextFormatAlign; 
-	import flash.events.KeyboardEvent; 
+
+	import flash.events.KeyboardEvent;
+	import flash.geom.*; 
 	import vector.*;  	
 	
 	
@@ -21,10 +22,8 @@ package levelMaker {
 		
 		private var ld:LevelData;
 		private var groundColorInput:ColorInput; 
-		private var addPointsButton:FunButton; 
-		private var completeButton:FunButton; 
-		
-		private var textFormat:TextFormat; 
+		private var addPointsButton:CCToggleButton; 
+		private var completeButton:CCButton; 
 		
 		private var finalTextFormat:TextFormat; 
 		
@@ -49,23 +48,19 @@ package levelMaker {
 			
 			//Set up buttons
 			
-			textFormat = new TextFormat(); 
-			textFormat.size = 20; 
-			textFormat.font = "Impact";
-			textFormat.bold = true; 
-			textFormat.align = TextFormatAlign.CENTER;
+			addPointsButton = new CCToggleButton("ADD POINTS: NO", "ADD POINTS: YES", 0xaaffaa, 0x11ff11, 24, 0x000000, 
+													new Rectangle(400, 50, 225, 50), 0xaaaaff, true);
 			
-			addPointsButton = new FunButton("ADD POINTS: NO", textFormat, 175, 30, 0x000000, 0xffffff, 0xaaaaaa, 0xdddddd );
-			addPointsButton.x = 400; 
-			addPointsButton.y = 50; 
-			addChild(addPointsButton);
-			addPointsButton.addEventListener(MouseEvent.CLICK, buttonClick);
 			
-			completeButton = new FunButton("COMPLETE", textFormat, 175, 30, 0x000000, 0xffffff, 0xaaaaaa, 0xdddddd );
-			completeButton.x = 700; 
-			completeButton.y = 50; 
-			addChild(completeButton);
+			completeButton = new CCButton("COMPLETE", 0xaaffaa, 0x11ff11, 24, 0x000000, 
+											new Rectangle(650, 50, 225, 50), 0xaaaaff, true );
+											
+			addPointsButton.addEventListener(MouseEvent.CLICK, toggleClick);
 			completeButton.addEventListener(MouseEvent.CLICK, completeClick);
+	
+			addChild(completeButton);
+			addChild(addPointsButton);
+			
 			
 			//Set up text field
 			
@@ -97,20 +92,14 @@ package levelMaker {
 					graphics.moveTo(mouseX, mouseY);
 				} 
 				
-				ld.groundPoints.push(new vector2d(mouseX, mouseY)); 
+				ld.groundPoints.push(new vector2d(parseInt(mouseX.toFixed(0)), parseInt(mouseY.toFixed(0)))); 
 			}
 			
 		}
 		
-		private function buttonClick(evt:MouseEvent):void {
+		private function toggleClick(evt:MouseEvent):void {
 			
-				
 			addPoints = !addPoints; 
-			
-			if (addPoints)
-				addPointsButton.setButtonText ("ADD POINTS: YES"); 
-			else
-				addPointsButton.setButtonText ("ADD POINTS: NO"); 
 			
 			evt.stopImmediatePropagation();
 		}
@@ -121,7 +110,10 @@ package levelMaker {
 			
 			addChild(finalXML); 
 			
-			
+			removeChild(addPointsButton); 
+			removeChild(completeButton);
+			removeChild(groundColorInput);
+			graphics.clear();
 			
 			evt.stopImmediatePropagation();
 		}

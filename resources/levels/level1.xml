@@ -1,0 +1,21 @@
+<levelData>
+  <groundPoints groundColor="ff0000" lineThickness="2" lineColor="000000">
+    <vector2d x="-35" y="711"/>
+    <vector2d x="140" y="672"/>
+    <vector2d x="294" y="676"/>
+    <vector2d x="494" y="658"/>
+    <vector2d x="627" y="699"/>
+    <vector2d x="864" y="694"/>
+    <vector2d x="954" y="690"/>
+    <vector2d x="1066" y="725"/>
+    <vector2d x="1059" y="815"/>
+    <vector2d x="632" y="856"/>
+    <vector2d x="396" y="811"/>
+    <vector2d x="90" y="803"/>
+    <vector2d x="-30" y="749"/>
+  </groundPoints>
+  <landPoints landingColor="ff00" lineThickness="20">
+    <vector2d x="490" y="654"/>
+    <vector2d x="623" y="695"/>
+  </landPoints>
+</levelData>

@@ -42,17 +42,32 @@ package lander {
 			return p_landPt2; 
 		}
 		
+		public function get landingColor():uint {
+			return p_landingColor; 
+		}
+		
+		public function get landingThickness():int {
+			return p_landingThickness; 
+		}
+		
 		public function get groundColor():uint {
 			return p_groundColor; 
 		}
 		
-		public function set groundColor(col:uint) {
+		public function set groundColor(col:uint):void {
 			p_groundColor = col; 
+		}
+		
+		public function get groundLineColor():uint {
+			return p_groundLineColor; 
+		}
+		
+		public function get groundLineThickness():int {
+			return p_groundLineThickness; 
 		}
 		
 		public function toXML():XML {
 			var xml:XML = new XML(<levelData />); 
-			
 			
 			xml.appendChild(<groundPoints />);
 			var groundPointsXML:XML = xml.groundPoints[0];
@@ -77,5 +92,27 @@ package lander {
 			return xml; 
 		}
 		
+		public function loadXML(xml:XML):void {
+			var groundPointsList:XMLList = xml.groundPoints[0].children();
+			var tmpXML:XML; 
+			
+			for each (tmpXML in groundPointsList) {
+				//trace("To add:\n" + tmpXML.toXMLString());
+				p_groundPoints.push(new vector2d(tmpXML.@x, tmpXML.@y)); 
+				//trace("Added x: " + p_groundPoints[p_groundPoints.length - 1].x); 
+				//trace("Added y: " + p_groundPoints[p_groundPoints.length - 1].y); 
+			}
+			
+			p_groundColor =  parseInt(xml.groundPoints[0].@groundColor, 16); 
+			
+			p_groundLineColor = parseInt(xml.groundPoints[0].@lineColor, 16);
+			
+			var landPointsList:XMLList = xml.landPoints[0].children();
+			p_landPt1 = new vector2d(landPointsList[0].@x, landPointsList[0].@y);
+			p_landPt2 = new vector2d(landPointsList[1].@x, landPointsList[1].@y);
+			
+			p_landingThickness = parseInt(xml.landPoints[0].@lineThickness);
+			p_landingColor = parseInt(xml.landPoints[0].@landingColor, 16);
+		}
 	}
 }

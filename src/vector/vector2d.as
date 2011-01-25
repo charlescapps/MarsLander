@@ -41,6 +41,16 @@ package vector{
 			return new vector2d(vec1.x + vec2.x, vec1.y + vec2.y);
 		}
 		
+		public static function getAngle(vec1:vector2d, vec2:vector2d):Number {
+			var diff:vector2d = vector2d.add(scale(vec1, -1), vec2);
+			return Math.atan(diff.y / diff.x);
+		}
+		
+		public static function scale(vec:vector2d, factor:Number):vector2d {
+			var newVec:vector2d = new vector2d(vec.x, vec.y);
+			return newVec.multiply(factor);
+		}
+		
 		public function get_unit_vec():vector2d {
 			return new vector2d(_x / magnitude(), _y / magnitude());
 		}
@@ -55,6 +65,17 @@ package vector{
 			xml.@y = _y; 
 			
 			return xml; 
+		}
+		
+		public function loadXML(xml:XML):vector2d {
+			this.x = xml.@x; 
+			this.y = xml.@y; 
+			
+			return this; 
+		}
+		
+		public function toString():String {
+			return "x: " + x + ", y: " + y;
 		}
 	}
 }

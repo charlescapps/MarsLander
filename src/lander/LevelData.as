@@ -16,6 +16,8 @@ package lander {
 		private var p_landingColor:uint; 
 		private var p_landingThickness:int; 
 		
+		private var p_landerStartPosition:vector2d; 
+		
 		public function LevelData() {
 			 p_groundPoints = new Vector.<vector2d>(); 
 			 
@@ -27,7 +29,9 @@ package lander {
 			 p_landPt2 = new vector2d(200, 200); 
 			 
 			 p_landingColor = 0x00ff00; 
-			 p_landingThickness = 2; 
+			 p_landingThickness = 2;
+			 
+			 p_landerStartPosition = new vector2d(100, 200); 
 		}
 		
 		public function get groundPoints():Vector.<vector2d> {

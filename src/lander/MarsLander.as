@@ -1,5 +1,6 @@
 package lander{
 	import flash.display.Sprite;
+	import flash.display.Bitmap; 
 	import vector.*;
 	import flash.events.KeyboardEvent;
 	import flash.events.Event;
@@ -12,6 +13,7 @@ package lander{
 	public class MarsLander extends Sprite {
 		
 		private var imageFactory:ImageFactory; 
+		private var currentImage:Bitmap; 
 		
 		private const THRUST:Number = .7;	//Units of pixels per frame^2
 		private const DOWN_THRUST:Number = .3;
@@ -30,7 +32,6 @@ package lander{
 		private var isRotatingCW:Boolean; 
 		private var isRotatingCCW:Boolean; 
 		
-		public const hitRect:Rectangle = new Rectangle(0, 0, Constants.LANDER_WIDTH, Constants.LANDER_HEIGHT);
 		public var hitPoints:Vector.<Point>;
 		
 		//public functions
@@ -44,24 +45,18 @@ package lander{
 			
 			hitPoints = new Vector.<Point>();
 			hitPoints.push(new Point(0, 0), 
-							new Point(hitRect.width, 0), 
-							new Point(0, hitRect.height), 
-							new Point(hitRect.width, hitRect.height));
+							new Point(Constants.LANDER_WIDTH, 0), 
+							new Point(0, Constants.LANDER_HEIGHT), 
+							new Point(Constants.LANDER_WIDTH, Constants.LANDER_HEIGHT));
 			
 			//Add children
-			addChild(imageFactory.landerImg); 
+			currentImage = imageFactory.landerImg;
+			addChild(currentImage); 
 			
-			//Test by showing hit rectangle
-			drawHitRect();
 			
 			 
 		}
 		
-		public function drawHitRect():void {
-			graphics.beginFill(0x000000);
-			graphics.drawRect(0, 0, hitRect.width, hitRect.height);
-			graphics.endFill();
-		}
 		
 		public function afterAddedToStage():void {
 			//Add events
@@ -75,66 +70,99 @@ package lander{
 		}
 		
 		public function stop():void {
-			velocity.x = velocity.y = 0; 
-			removeEventListener(Event.ENTER_FRAME, enterFrame);
+			if (hasEventListener(Event.ENTER_FRAME))
+				removeEventListener(Event.ENTER_FRAME, enterFrame);
+		}
+		
+		public function start():void {
+			addEventListener(Event.ENTER_FRAME, enterFrame);
+		}
+		
+		//Function to pause and free up image resource when user goes to menu
+		//Image was obtained as a clone from the ImageFactory class, so after setting currentImage = null
+		//there will be no more reference to this object--it should be garbage collected
+		public function pauseForMenu():void {
+			stop(); 
+			removeChild(currentImage);
+			currentImage = null; 
+		}
+		
+		//Function to resume from menu -- gets clone of appropriate image from imageFactory then adds it
+		public function resumeFromMenu():void {
+			if (isThrusting || isThrustingLeft || isThrustingRight || isThrustingDown)
+				currentImage = imageFactory.landerThrustImg; 
+			else
+				currentImage = imageFactory.landerImg; 
+				
+			addChild(currentImage);
+			
+			start();
 		}
 		
 		
 		//Motion functions
 		
 		private function startThrusting():void {
-			if (contains(imageFactory.landerImg))
-				removeChild(imageFactory.landerImg); 
-			addChild(imageFactory.landerThrustImg); 
+			if (currentImage!=(imageFactory.landerThrustImg)) {
+				removeChild(currentImage); 
+				addChild(currentImage=imageFactory.landerThrustImg);
+			} 
 			isThrusting = true; 
 		}
 		
 		private function startThrustingDown():void {
-			if (contains(imageFactory.landerImg))
-				removeChild(imageFactory.landerImg); 
-			addChild(imageFactory.landerThrustImg); 
+			if (currentImage!=(imageFactory.landerThrustImg)) {
+				removeChild(currentImage); 
+				addChild(currentImage=imageFactory.landerThrustImg);
+			} 
 			isThrustingDown = true; 
 		}
 		
 		private function startThrustingLeft():void {
-			if (contains(imageFactory.landerImg))
-				removeChild(imageFactory.landerImg); 
-			addChild(imageFactory.landerThrustImg); 
+			if (currentImage!=(imageFactory.landerThrustImg)) {
+				removeChild(currentImage); 
+				addChild(currentImage=imageFactory.landerThrustImg);
+			} 
 			isThrustingLeft = true; 
 		}
 		
 		private function startThrustingRight():void {
-			if (contains(imageFactory.landerImg))
-				removeChild(imageFactory.landerImg); 
-			addChild(imageFactory.landerThrustImg); 
+			if (currentImage!=(imageFactory.landerThrustImg)) {
+				removeChild(currentImage); 
+				addChild(currentImage=imageFactory.landerThrustImg);
+			} 
 			isThrustingRight = true; 
 		}
 		
 		private function stopThrusting():void {
-			if (contains(imageFactory.landerThrustImg))
-				removeChild(imageFactory.landerThrustImg); 
-			addChild(imageFactory.landerImg); 
+			if (currentImage!=(imageFactory.landerImg)) {
+				removeChild(currentImage); 
+				addChild(currentImage=imageFactory.landerImg);
+			} 
 			isThrusting = false; 
 		}
 		
 		private function stopThrustingDown():void {
-			if (contains(imageFactory.landerThrustImg))
-				removeChild(imageFactory.landerThrustImg); 
-			addChild(imageFactory.landerImg); 
+			if (currentImage!=(imageFactory.landerImg)) {
+				removeChild(currentImage); 
+				addChild(currentImage=imageFactory.landerImg);
+			}
 			isThrustingDown = false; 
 		}
 		
 		private function stopThrustingLeft():void {
-			if (contains(imageFactory.landerThrustImg))
-				removeChild(imageFactory.landerThrustImg); 
-			addChild(imageFactory.landerImg); 
+			if (currentImage!=(imageFactory.landerImg)) {
+				removeChild(currentImage); 
+				addChild(currentImage=imageFactory.landerImg);
+			} 
 			isThrustingLeft = false; 
 		}
 		
 		private function stopThrustingRight():void {
-			if (contains(imageFactory.landerThrustImg))
-				removeChild(imageFactory.landerThrustImg); 
-			addChild(imageFactory.landerImg); 
+			if (currentImage!=(imageFactory.landerImg)) {
+				removeChild(currentImage); 
+				addChild(currentImage=imageFactory.landerImg);
+			}
 			isThrustingRight = false; 
 		}
 		
@@ -151,7 +179,7 @@ package lander{
 		}
 		
 		private function thrustRight():void {
-			velocity.add((getOrientation(rotation - 90.0).multiply(-1.0*RIGHT_THRUST)));
+			velocity.add((getOrientation(rotation - 90.0).multiply(-1*RIGHT_THRUST)));
 		}
 		
 		private function fall():void {
@@ -205,7 +233,6 @@ package lander{
 					stopThrustingLeft(); break; 
 				case (Keyboard.RIGHT):
 					stopThrustingRight(); break; 
-					
 				case (Constants.A_KEY): 
 					isRotatingCCW = false; break ;
 				case (Constants.D_KEY): 

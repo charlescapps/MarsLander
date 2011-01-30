@@ -13,13 +13,13 @@ package levelMaker {
 		private var p_hoverColor:uint;  
 		private var p_propogate:Boolean; 
 		
-		public function CCButton(text:String, upColor:uint, downColor:uint, size:int, fontCol:uint, rec:Rectangle, 
+		public function CCButton(text:String, upColor:uint, downColor:uint, fontSiz:int, fontCol:uint, rec:Rectangle, 
 										hoverColor:uint, propogate:Boolean = true) {
 			super(); 
 			this.label = this.p_upText = text; 
 			this.color = this.p_upColor = upColor; 
 			this.p_downColor = downColor; 
-			this.fontSize = size; 
+			this.fontSize = fontSiz; 
 			this.fontColor = fontCol; 
 			this.extents = rec; 
 			

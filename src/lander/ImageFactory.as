@@ -5,14 +5,16 @@ package lander {
 	 */
 	public class ImageFactory {
 		[Embed(source="../../resources/lander.png")]
-		[Bindable]	
-		private var Lander:Class; 
-		private const landerImage:Bitmap = new Lander();
+		private var LanderImg:Class; 
 		
 		[Embed(source="../../resources/lander_thrust.png")]
-		[Bindable]	
-		private var LanderThrust:Class; 
-		private const landerThrustImage:Bitmap = new LanderThrust();
+		private var LanderThrustImg:Class; 
+		
+		[Embed(source="../../resources/home_screen.png")]
+		private var HomeScreenImg:Class; 
+		
+		[Embed(source="../../resources/settings_screen.png")]
+		private var SettingsScreenImg:Class; 
 		
 		private static var theInstance:ImageFactory = null;
 		
@@ -27,20 +29,25 @@ package lander {
 		}
 		
 		public function get landerImg():Bitmap {
-			return landerImage; 
+			return new LanderImg() as Bitmap;  
 		}
 		
 		public function get landerThrustImg():Bitmap {
-			return landerThrustImage;
+			return new LanderThrustImg() as Bitmap; 
+		}
+		
+		public function get homeScreenImg():Bitmap {
+			return new HomeScreenImg() as Bitmap; 
+		}
+		
+		public function get settingsScreenImg():Bitmap {
+			return new SettingsScreenImg() as Bitmap; 
 		}
 		
 		public function toString():String {
 			return "Image factory exists!";
 		}
-		
 	}
-	
-	
 }
 
 internal class oneFactory {

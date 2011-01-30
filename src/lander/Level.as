@@ -14,25 +14,25 @@ package lander {
 	 */
 	public class Level extends Sprite {
 		
-		private const LANDER_START:vector2d = new vector2d(200, 100);
-		private const SPEED_START:vector2d = new vector2d(500 , 25);
+		private const LANDER_START:vector2d = new vector2d(200, 100); //Position of lander when game starts
+		private const SPEED_START:vector2d = new vector2d(500 , 25);  //Position of box that displays your speed
 		
-		private const MAX_SPEED:int = 10; 
-		private const MAX_ROTATION:Number = 15*Math.PI / 180.0 ;
+		private const MAX_SPEED:int = 10; //Max speed allowed when you try to land
+		private const MAX_ROTATION:Number = 15*Math.PI / 180.0 ; //Max rotation off from orientation of landing pad allowed
 		
-		private var marsLander:MarsLander; 
-		private var ground:Sprite; 
-		private var landingPad:Sprite; 
+		private var marsLander:MarsLander; //The Marslander!
+		private var ground:Sprite; 		   //Sprite displaying the ground
+		private var landingPad:Sprite; 	   //Sprite displaying the landing pad
 		
-		private var messageBox:TextField;
-		private var speedBox:TextField; 
-		private var textFormat:TextFormat; 
-		private var textFormat2:TextFormat; 
+		private var messageBox:TextField;  //TextField that displays a message for the user
+		private var speedBox:TextField;    //TextField that displays your current speed
+		private var textFormat:TextFormat; //Format of the messageBox
+		private var textFormat2:TextFormat; //Format of the speedBox
 		
-		private var levelData:LevelData; 
+		private var levelData:LevelData; //The data for the level
 		
 		public function Level() {
-			trace("Testing git2");
+			
 			//initialize variables
 			marsLander = new MarsLander(); 
 			marsLander.x = LANDER_START.x; 
@@ -41,7 +41,7 @@ package lander {
 			ground = new Sprite();
 			landingPad = new Sprite();
 			
-			//Initialize text field and format
+			//Initialize text fields and formats
 			messageBox = new TextField();
 			messageBox.autoSize = TextFieldAutoSize.LEFT;
 			
@@ -78,7 +78,6 @@ package lander {
 		
 		public function afterAddedToStage():void {
 			marsLander.afterAddedToStage(); 
-				
 		}
 		
 		
@@ -116,6 +115,7 @@ package lander {
 				
 			removeEventListener(Event.ENTER_FRAME, enterFrame);
 			marsLander.stop();
+			
 		}
 		
 		private function enterFrame(evt:Event):void {

@@ -55,7 +55,7 @@ package levelMaker {
 		}
 		
 		public function set upColor(col:uint):void {
-			p_upColor = col; 
+			this.color = p_upColor = col; 
 		}
 		
 		public function get upText():String {

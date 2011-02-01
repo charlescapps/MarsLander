@@ -15,12 +15,11 @@ package lander{
 		private var imageFactory:ImageFactory; 
 		private var currentImage:Bitmap; 
 		
-		private const THRUST:Number = .7;	//Units of pixels per frame^2
-		private const DOWN_THRUST:Number = .3;
-		private const LEFT_THRUST:Number = .6;
-		private const RIGHT_THRUST:Number = .6; 
-		private const ROTATIONAL_THRUST:Number = 1.0; //Units of degrees (per frame)
-		private const GRAVITY:Number = .4; //Units of pixels per frame^2
+		private var THRUST:Number;	//Units of pixels per frame^2
+		private var SIDE_THRUST:Number; //Units of pixels per frame^2
+		private var GRAVITY:Number; //Units of pixels per frame^2
+		
+		private const ROTATIONAL_THRUST:Number = Constants.ROTATIONAL_THRUST; //Units of degrees (per frame)
 		
 		private var velocity:vector2d;	//Units of pixels per frame
 		
@@ -39,131 +38,153 @@ package lander{
 		public function MarsLander() {
 			trace("Entering MarsLander constructor...");
 			//Initialize vars
+			
 			imageFactory = ImageFactory.getInstance();
+			currentImage = imageFactory.landerImg; 
+			addChild(currentImage);
+			
+			setHighGravity(Settings.gravityHigh); //Sets thrust and gravity based on Settings variable
+			
 			velocity = new vector2d(0, 0);
-			isThrusting = isRotatingCW = isRotatingCCW = false; 
+			
+			isThrusting = isThrustingDown = isThrustingLeft = isThrustingRight = isRotatingCW = isRotatingCCW = false; 
 			
 			hitPoints = new Vector.<Point>();
+			
 			hitPoints.push(new Point(0, 0), 
 							new Point(Constants.LANDER_WIDTH, 0), 
 							new Point(0, Constants.LANDER_HEIGHT), 
 							new Point(Constants.LANDER_WIDTH, Constants.LANDER_HEIGHT));
-			
-			//Add children
-			currentImage = imageFactory.landerImg;
-			addChild(currentImage); 
-			
-			
-			 
+	
 		}
 		
-		
-		public function afterAddedToStage():void {
-			//Add events
-			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
-			stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
-			this.addEventListener(Event.ENTER_FRAME, enterFrame);
-		}
 		
 		public function get vel():vector2d {
 			return velocity; 
 		}
 		
+		public function set vel(v:vector2d):void {
+			velocity = v; 
+		}
+		
 		public function stop():void {
 			if (hasEventListener(Event.ENTER_FRAME))
 				removeEventListener(Event.ENTER_FRAME, enterFrame);
+			
+			if (stage != null && stage.hasEventListener(KeyboardEvent.KEY_DOWN))
+				stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDown);
+				
+			if (stage != null && stage.hasEventListener(KeyboardEvent.KEY_UP))
+				stage.removeEventListener(KeyboardEvent.KEY_UP, keyUp);
+				
 		}
 		
 		public function start():void {
+			//Add stage events
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
+			stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
 			addEventListener(Event.ENTER_FRAME, enterFrame);
+		}
+		
+		public function setHighGravity(isHigh:Boolean):void {
+			GRAVITY = (isHigh ? Constants.HIGH_GRAVITY: Constants.LOW_GRAVITY); 
+			THRUST = (isHigh ? Constants.HIGH_THRUST: Constants.LOW_THRUST);
+			SIDE_THRUST = (isHigh ? Constants.HIGH_SIDE_THRUST: Constants.LOW_SIDE_THRUST);
 		}
 		
 		//Function to pause and free up image resource when user goes to menu
 		//Image was obtained as a clone from the ImageFactory class, so after setting currentImage = null
 		//there will be no more reference to this object--it should be garbage collected
-		public function pauseForMenu():void {
+		public function dispose():void {
 			stop(); 
-			removeChild(currentImage);
-			currentImage = null; 
-		}
-		
-		//Function to resume from menu -- gets clone of appropriate image from imageFactory then adds it
-		public function resumeFromMenu():void {
-			if (isThrusting || isThrustingLeft || isThrustingRight || isThrustingDown)
-				currentImage = imageFactory.landerThrustImg; 
-			else
-				currentImage = imageFactory.landerImg; 
-				
-			addChild(currentImage);
 			
-			start();
+			if (currentImage !=null && contains(currentImage))
+				removeChild(currentImage);
+			currentImage = null; 
 		}
 		
 		
 		//Motion functions
 		
 		private function startThrusting():void {
-			if (currentImage!=(imageFactory.landerThrustImg)) {
-				removeChild(currentImage); 
+			if (!isThrusting && !isThrustingDown && !isThrustingLeft && !isThrustingRight) {
+				trace("Current Image in startThrusting: " + currentImage);
+				if (currentImage!=null && contains(currentImage))
+					removeChild(currentImage); 
 				addChild(currentImage=imageFactory.landerThrustImg);
 			} 
 			isThrusting = true; 
 		}
 		
 		private function startThrustingDown():void {
-			if (currentImage!=(imageFactory.landerThrustImg)) {
-				removeChild(currentImage); 
+			if (!isThrusting && !isThrustingDown && !isThrustingLeft && !isThrustingRight) {
+				if (currentImage!=null && contains(currentImage))
+					removeChild(currentImage);  
 				addChild(currentImage=imageFactory.landerThrustImg);
 			} 
 			isThrustingDown = true; 
 		}
 		
 		private function startThrustingLeft():void {
-			if (currentImage!=(imageFactory.landerThrustImg)) {
-				removeChild(currentImage); 
+			if (!isThrusting && !isThrustingDown && !isThrustingLeft && !isThrustingRight) {
+				if (currentImage!=null && contains(currentImage))
+					removeChild(currentImage); 
 				addChild(currentImage=imageFactory.landerThrustImg);
 			} 
 			isThrustingLeft = true; 
 		}
 		
 		private function startThrustingRight():void {
-			if (currentImage!=(imageFactory.landerThrustImg)) {
-				removeChild(currentImage); 
+			if (!isThrusting && !isThrustingDown && !isThrustingLeft && !isThrustingRight) {
+				if (currentImage!=null && contains(currentImage))
+					removeChild(currentImage);  
 				addChild(currentImage=imageFactory.landerThrustImg);
 			} 
 			isThrustingRight = true; 
 		}
 		
 		private function stopThrusting():void {
-			if (currentImage!=(imageFactory.landerImg)) {
-				removeChild(currentImage); 
+			isThrusting = false; 
+			
+			if (!isThrusting && !isThrustingDown && !isThrustingLeft && !isThrustingRight) {
+				if (currentImage!=null && contains(currentImage))
+					removeChild(currentImage); 
 				addChild(currentImage=imageFactory.landerImg);
 			} 
-			isThrusting = false; 
+			
 		}
 		
 		private function stopThrustingDown():void {
-			if (currentImage!=(imageFactory.landerImg)) {
-				removeChild(currentImage); 
+			isThrustingDown = false; 
+			
+			if (!isThrusting && !isThrustingDown && !isThrustingLeft && !isThrustingRight) {
+				if (currentImage!=null && contains(currentImage))
+					removeChild(currentImage); 
 				addChild(currentImage=imageFactory.landerImg);
 			}
-			isThrustingDown = false; 
+			
 		}
 		
 		private function stopThrustingLeft():void {
-			if (currentImage!=(imageFactory.landerImg)) {
-				removeChild(currentImage); 
+			isThrustingLeft = false; 
+			
+			if (!isThrusting && !isThrustingDown && !isThrustingLeft && !isThrustingRight) {
+				if (currentImage!=null && contains(currentImage))
+					removeChild(currentImage); 
 				addChild(currentImage=imageFactory.landerImg);
 			} 
-			isThrustingLeft = false; 
+			
 		}
 		
 		private function stopThrustingRight():void {
-			if (currentImage!=(imageFactory.landerImg)) {
-				removeChild(currentImage); 
+			isThrustingRight = false; 
+			
+			if (!isThrusting && !isThrustingDown && !isThrustingLeft && !isThrustingRight) {
+				if (currentImage!=null && contains(currentImage))
+					removeChild(currentImage);  
 				addChild(currentImage=imageFactory.landerImg);
 			}
-			isThrustingRight = false; 
+			
 		}
 		
 		private function thrust():void {
@@ -171,15 +192,15 @@ package lander{
 		}
 		
 		private function thrustDown():void {
-			velocity.add((getOrientation(rotation).multiply(-1.0*DOWN_THRUST)));
+			velocity.add((getOrientation(rotation).multiply(-1.0*SIDE_THRUST)));
 		}
 		
 		private function thrustLeft():void {
-			velocity.add((getOrientation(rotation - 90.0).multiply(LEFT_THRUST)));
+			velocity.add((getOrientation(rotation - 90.0).multiply(SIDE_THRUST)));
 		}
 		
 		private function thrustRight():void {
-			velocity.add((getOrientation(rotation - 90.0).multiply(-1*RIGHT_THRUST)));
+			velocity.add((getOrientation(rotation - 90.0).multiply(-1*SIDE_THRUST)));
 		}
 		
 		private function fall():void {

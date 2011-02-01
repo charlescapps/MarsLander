@@ -82,6 +82,22 @@ package levelMaker {
 			return p_isDown;
 		}
 		
+		public function set isDown(down:Boolean):void {
+			if (down!=p_isDown) {
+				p_isDown = !p_isDown; 
+				
+				if (p_isDown) {
+					 this.label = p_downText; 
+					 this.color = p_downColor; 
+				}
+				else {
+					this.label = p_upText; 
+					this.color = p_upColor; 
+				}
+				this.refresh();
+			}
+		}
+		
 		//********************Mouse Events*********************8*****
 		
 		private function onClick(evt:MouseEvent):void {

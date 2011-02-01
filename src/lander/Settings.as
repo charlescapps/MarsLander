@@ -4,5 +4,6 @@ package lander {
 	 */
 	public class Settings {
 		public static var gravityHigh:Boolean = false; 
+		
 	}
 }

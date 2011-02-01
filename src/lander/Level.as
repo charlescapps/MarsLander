@@ -1,4 +1,5 @@
 package lander {
+	import flash.events.MouseEvent;
 	import vector.*;
 	import flash.text.TextField; 
 	import flash.text.TextFormat; 
@@ -7,18 +8,19 @@ package lander {
 	import landerEvents.*;
 	import flash.display.Sprite;
 	import flash.events.Event;
-	import flash.geom.Point;
+	import flash.geom.*;
+	import levelMaker.CCButton; 
 
 	/**
 	 * @author charles
 	 */
 	public class Level extends Sprite {
 		
-		private const LANDER_START:vector2d = new vector2d(200, 100); //Position of lander when game starts
-		private const SPEED_START:vector2d = new vector2d(500 , 25);  //Position of box that displays your speed
+		private static const LANDER_START:vector2d = new vector2d(200, 150); //Position of lander when game starts
+		private static const SPEED_START:vector2d = new vector2d(500 , 25);  //Position of box that displays your speed
 		
-		private const MAX_SPEED:int = 10; //Max speed allowed when you try to land
-		private const MAX_ROTATION:Number = 15*Math.PI / 180.0 ; //Max rotation off from orientation of landing pad allowed
+		private static const MAX_SPEED:int = 10; //Max speed allowed when you try to land
+		private static const MAX_ROTATION:Number = 15*Math.PI / 180.0 ; //Max rotation off from orientation of landing pad allowed
 		
 		private var marsLander:MarsLander; //The Marslander!
 		private var ground:Sprite; 		   //Sprite displaying the ground
@@ -29,7 +31,11 @@ package lander {
 		private var textFormat:TextFormat; //Format of the messageBox
 		private var textFormat2:TextFormat; //Format of the speedBox
 		
-		private var levelData:LevelData; //The data for the level
+		private var levelData:LevelData; //The data for the level (shape of ground, location of landing pad)
+		private var gameOver:Boolean = false; 
+		
+		private var homeButton:CCButton = new CCButton("Back Home", 0xff8888, 0xff0000, 30, 0x00ff00, new Rectangle(100, 25, 200, 50), 0x666666);
+		private var pauseButton:CCButton = new CCButton("Pause", 0xff8888, 0xff0000, 30, 0x00ff00, new Rectangle(100, 25, 200, 50), 0x666666);
 		
 		public function Level() {
 			
@@ -70,18 +76,48 @@ package lander {
 			addChild(landingPad);
 			addChild(speedBox);
 			
-			//Add events
-			addEventListener(Event.ENTER_FRAME, enterFrame);
-			addEventListener(LanderEvent.HIT_GROUND_EVENT, hitGround);
 			
 		}
 		
-		public function afterAddedToStage():void {
-			marsLander.afterAddedToStage(); 
+		public function removeAllListeners():void {
+			
+			if (hasEventListener(Event.ENTER_FRAME))
+				removeEventListener(Event.ENTER_FRAME, enterFrame);
+				
+			if (hasEventListener(LanderEvent.HIT_GROUND_EVENT))
+				removeEventListener(LanderEvent.HIT_GROUND_EVENT, hitGround);
+				
+			if (pauseButton.hasEventListener(MouseEvent.CLICK))
+				pauseButton.removeEventListener(MouseEvent.CLICK, onClickPause);
+				
+			if (homeButton.hasEventListener(MouseEvent.CLICK))
+				homeButton.removeEventListener(MouseEvent.CLICK, onClickHome);
+				
 		}
 		
+		public function resumeFromMenu():void {
+			
+			//Add time-based events if the game isn't over
+			if (!gameOver) {
+				addEventListener(Event.ENTER_FRAME, enterFrame);
+				addEventListener(LanderEvent.HIT_GROUND_EVENT, hitGround);
+				marsLander.start();
+				
+				addChild(pauseButton);
+				pauseButton.addEventListener(MouseEvent.CLICK, onClickPause);
+			}
+			else {
+				addChild(messageBox);
+				centerTextField(messageBox);
+				
+				addChild(homeButton);
+				homeButton.addEventListener(MouseEvent.CLICK, onClickHome);
+			}
+			
+			
+		}
 		
-		public function centerTextField(aTextField:TextField):void {
+		private function centerTextField(aTextField:TextField):void {
 			aTextField.x = stage.stageWidth / 2 - aTextField.width/2;  
 			aTextField.y = stage.stageHeight / 4;
 		}
@@ -92,7 +128,7 @@ package lander {
 			trace("Angle diff: " + angleDiff);
 			trace("Max angle: " + MAX_ROTATION);
 			
-			if (angleDiff > this.MAX_ROTATION) {
+			if (angleDiff > MAX_ROTATION) {
 				messageBox.text = "You crashed and died cause your angle was off!"; 
 			}
 			else if (marsLander.vel.magnitude() > MAX_SPEED) 
@@ -115,6 +151,16 @@ package lander {
 				
 			removeEventListener(Event.ENTER_FRAME, enterFrame);
 			marsLander.stop();
+			
+			if (contains(pauseButton)) {
+				removeChild(pauseButton);
+				pauseButton.removeEventListener(MouseEvent.CLICK, onClickPause);
+			}
+			
+			addChild(homeButton);
+			homeButton.addEventListener(MouseEvent.CLICK, onClickHome);
+			
+			gameOver = true; 
 			
 		}
 		
@@ -160,5 +206,40 @@ package lander {
 			
 		}
 		
+		public function loadLevelState(ls:LevelState):void {
+			if (ls!=null) {
+				marsLander.x = ls.landerPosition.x; 
+				marsLander.y = ls.landerPosition.y; 
+				marsLander.rotation = ls.landerRotation; 
+				marsLander.vel = ls.landerVelocity; 
+				gameOver = ls.gameOver; 
+				messageBox.text = ls.messageStr;
+				speedBox.text = ls.speedBoxStr; 
+			}
+		}
+		
+		public function dumpLevelState():LevelState {
+			return new LevelState(new vector2d(marsLander.x, marsLander.y), marsLander.vel, marsLander.rotation, gameOver, messageBox.text, speedBox.text);
+		}
+		
+		private function onClickHome(evt:MouseEvent):void {
+			dispatchEvent(new LanderEvent(LanderEvent.GO_TO_HOME, true));
+		}
+		
+		private function onClickPause(evt:MouseEvent):void {
+			dispatchEvent(new LanderEvent(LanderEvent.GO_TO_HOME, true));
+		}
+		
+		public function dispose():void {
+
+			removeAllListeners(); //removes all event listeners
+			
+			marsLander.dispose();
+			
+			
+		}
+
+				
 	}
+	
 }

@@ -1,4 +1,5 @@
 package lander {
+	import landerEvents.LanderEvent;
 	import flash.display.Sprite;
 	import flash.display.Bitmap; 
 	import flash.geom.Rectangle;
@@ -23,11 +24,35 @@ package lander {
 			addChild(backToHomeButton);
 			addChild(gravityButton);
 			
+			if (Settings.gravityHigh)
+				gravityButton.isDown = true; 
+			else
+				gravityButton.isDown = false; 
+			
 			gravityButton.addEventListener(MouseEvent.CLICK, toggleGravity);
+			backToHomeButton.addEventListener(MouseEvent.CLICK, clickHomeButton);
+		}
+		
+		public function dispose():void {
+			if (gravityButton.hasEventListener(MouseEvent.CLICK))
+				gravityButton.removeEventListener(MouseEvent.CLICK, toggleGravity);
+			
+			if (backToHomeButton.hasEventListener(MouseEvent.CLICK))
+				backToHomeButton.removeEventListener(MouseEvent.CLICK, clickHomeButton);
+				
+			removeChild(settingsImage);
+			removeChild(backToHomeButton);
+			removeChild(gravityButton);
+			
+			settingsImage = null; 
 		}
 		
 		private function toggleGravity(evt:MouseEvent):void {
 			Settings.gravityHigh = ! Settings.gravityHigh; 
+		}
+		
+		private function clickHomeButton(evt:MouseEvent):void {
+			dispatchEvent(new LanderEvent(LanderEvent.GO_TO_HOME, true));
 		}
 	}
 }

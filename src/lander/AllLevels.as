@@ -18,7 +18,15 @@ package lander {
      
         }
         
+        public static function outOfLevels():Boolean {
+        	if (levelDataVector.length==0)
+        		return true; 
+        	else
+        		return false; 
+        }
+        
         public static function getEmbeddedLevels():void {
+        	levelDataVector = new Vector.<LevelData>();
         	levelDataVector.push(fileToLevelData(new Level1()));
         }
         

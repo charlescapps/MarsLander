@@ -2,10 +2,11 @@ package lander {
 	import landerEvents.LanderEvent;
 	import flash.display.Sprite;
 	import flash.display.Bitmap; 
-	import flash.geom.Rectangle;
+	import flash.geom.*;
 	import flash.events.MouseEvent;
 	import levelMaker.CCButton; 
 	import levelMaker.CCToggleButton; 
+	import levelMaker.CCScrollBox; 
 
 	/**
 	 * @author charles
@@ -18,11 +19,24 @@ package lander {
 		
 		private var backToHomeButton:CCButton = new CCButton("Back", 0xff8888, 0xff0000, 30, 0x00ff00, new Rectangle(100, 50, 200, 50), 0x666666); 
 		private var gravityButton:CCToggleButton = new CCToggleButton("Gravity: LOW", "Gravity: HIGH", 0xff8888, 0xff0000, 30, 0x000000, new Rectangle(512 - 100, 300, 200, 50), 0x666666);
+		private var scrollImgs:Vector.<Bitmap> = new Vector.<Bitmap>(); 
+		private var scrollVals:Array = new Array();
+		private var difficultyScrollBox:CCScrollBox; 
 		
 		public function SettingsScreen() {
+			scrollImgs.push(imageFactory.easyScrollImg, imageFactory.normalScrollImg, imageFactory.hardScrollImg, imageFactory.impossibleScrollImg);
+			scrollVals.push(Constants.DIFFICULTY_EASY, Constants.DIFFICULTY_NORMAL, Constants.DIFFICULTY_HARD, Constants.DIFFICULTY_IMPOSSIBLE);
+			
+			difficultyScrollBox = new CCScrollBox(new Point(512-100, 400), new Rectangle(0, 0, 200, 50), imageFactory.upScrollImg, imageFactory.downScrollImg, 
+										scrollImgs, scrollVals, 4, 0xff2222);
+			
+			
+			
 			addChild(settingsImage);
 			addChild(backToHomeButton);
 			addChild(gravityButton);
+			addChild(difficultyScrollBox);
+			
 			
 			if (Settings.gravityHigh)
 				gravityButton.isDown = true; 

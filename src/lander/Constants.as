@@ -2,6 +2,9 @@ package lander {
 	/**
 	 * @author charles
 	 */
+	 
+	import vector.*;  
+	 
 	public class Constants {
 		public static const STAGE_WIDTH:int = 1024; 
 		public static const STAGE_HEIGHT:int = 768; 
@@ -19,7 +22,10 @@ package lander {
 		
 		public static const ROTATIONAL_THRUST:Number = 1.0; 
 		
-		public static const A_KEY:uint = 65;
-		public static const D_KEY:uint = 68;
+		public static const DIFFICULTY_EASY:String = "EASY";
+		public static const DIFFICULTY_NORMAL:String = "NORMAL";
+		public static const DIFFICULTY_HARD:String = "HARD";
+		public static const DIFFICULTY_IMPOSSIBLE:String = "IMPOSSIBLE";
+		
 	}
 }

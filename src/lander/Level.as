@@ -13,10 +13,13 @@ package lander {
 
 	/**
 	 * @author charles
+	 * 
+	 * Class representing the rendering of a Mars Lander Level
+	 * 
 	 */
 	public class Level extends Sprite {
 		
-		private static const LANDER_START:vector2d = new vector2d(200, 150); //Position of lander when game starts
+		private static const LANDER_START:vector2d = new vector2d(200, 150); //Default position of lander when game starts
 		private static const SPEED_START:vector2d = new vector2d(500 , 25);  //Position of box that displays your speed
 		
 		private static const MAX_SPEED:int = 10; //Max speed allowed when you try to land

@@ -16,6 +16,24 @@ package lander {
 		[Embed(source="../../resources/settings_screen.png")]
 		private var SettingsScreenImg:Class; 
 		
+		[Embed(source="../../resources/easy.png")]
+		private var EasyScrollImg:Class; 
+		
+		[Embed(source="../../resources/normal.png")]
+		private var NormalScrollImg:Class; 
+		
+		[Embed(source="../../resources/hard.png")]
+		private var HardScrollImg:Class; 
+		
+		[Embed(source="../../resources/impossible.png")]
+		private var ImpossibleScrollImg:Class; 
+		
+		[Embed(source="../../resources/up.png")]
+		private var UpScrollImg:Class; 
+		
+		[Embed(source="../../resources/down.png")]
+		private var DownScrollImg:Class; 
+		
 		private static var theInstance:ImageFactory = null;
 		
 		public function ImageFactory(x:oneFactory) {
@@ -42,6 +60,30 @@ package lander {
 		
 		public function get settingsScreenImg():Bitmap {
 			return new SettingsScreenImg() as Bitmap; 
+		}
+		
+		public function get easyScrollImg():Bitmap {
+			return new EasyScrollImg() as Bitmap; 
+		}
+		
+		public function get normalScrollImg():Bitmap {
+			return new NormalScrollImg() as Bitmap; 
+		}
+		
+		public function get hardScrollImg():Bitmap {
+			return new HardScrollImg() as Bitmap; 
+		}
+		
+		public function get impossibleScrollImg():Bitmap {
+			return new ImpossibleScrollImg() as Bitmap; 
+		}
+		
+		public function get upScrollImg():Bitmap {
+			return new UpScrollImg() as Bitmap; 
+		}
+		
+		public function get downScrollImg():Bitmap {
+			return new DownScrollImg() as Bitmap; 
 		}
 		
 		public function toString():String {

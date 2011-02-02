@@ -5,62 +5,71 @@ package lander{
 
 	/**
 	 * @author charles
+	 * 
+	 * Entry point for MarsLander game created by Charles L. Capps
+	 * Includes features for final project of CS233G Game Programming at PCC
+	 * 
+	 * All sprites, bitmaps, and event listeners are disposed of when not present on screen. 
+	 * State of level is stored in LevelState object. 
+	 * Geometry of level is stored in LevelData object. 
+	 * 
 	 */
 	[SWF (width="1024",height="768",framerate="60")]
 	public class Main extends Sprite {
 		
 		
-		private var levelData:LevelData; 
-		private var levelState:LevelState; 
+		private var levelData:LevelData;	//Geometry of Level
+		private var levelState:LevelState; 	//State of level (i.e. position/velocity of Mars Lander, etc.)
 		
-		private var levelScreen:Level;
-		private var homeScreen:HomeScreen = new HomeScreen();
-		private var settingsScreen:SettingsScreen; 
+		private var levelScreen:Level;	//Sprite class representing display of level
+		private var homeScreen:HomeScreen = new HomeScreen();	//Sprite class with image / buttons for Home Screen
+		private var settingsScreen:SettingsScreen; 	//Sprite class with image / buttons for Settings Screen
 		
 		public function Main() {
 			
-			getNextLevelData();
+			getNextLevelData();	//Gets next LevelData object from embedded XML data
 			
 			addChild(homeScreen); 
 			
-			addEventListener(LanderEvent.GO_TO_SETTINGS, goToSettings);
+			//Events thrown by children for flow between different views
+			addEventListener(LanderEvent.GO_TO_SETTINGS, goToSettings);	
 			addEventListener(LanderEvent.START_GAME, startGame);
 			addEventListener(LanderEvent.GO_TO_HOME, goToHome);
 			addEventListener(LanderEvent.RESUME_GAME, resumeGame);
 			
 		}
 		
+		//Function called when a GO_TO_SETTINGS event is thrown. 
+		//Disposes of Home Screen (can only go to settings from Home Screen), then loads Settings Screen
 		private function goToSettings(evt:LanderEvent):void {
 			if (this.contains(homeScreen)) {
 				removeChild(homeScreen);
 				homeScreen.dispose();
-				homeScreen = null; 
+				homeScreen = null; 		//May as well force garbage collection before we make a new home screen
+										//...not sure how necessary this is, but seemed optimal!
+										//That way less things need to happen when the user goes back 
 			}
 			
 			settingsScreen = new SettingsScreen();
 			addChild(settingsScreen);
 		}
 		
+		//Function to start a new game--disposes of current Level Screen if a game is in progress
+		//Creates a new Level object (sprite) from the current Level Data
 		private function startGame(evt:LanderEvent):void {
-			if (this.contains(homeScreen)) {
-				removeChild(homeScreen);
-				homeScreen.dispose();
-				homeScreen = null; 
-			}
 				
-			if (levelScreen != null){
+			if (levelScreen != null){  //If a game is in progress, dispose it
 				levelScreen.dispose();
-				levelScreen = null; 
+				levelScreen = null; 	//Similar, forcing garbage collection so less has to happen "under the covers"
+										//when New Game or Resume buttons are pressed
 			}
 			
-			levelState = null; 
+			levelState = null; //Starting a new game, set levelState to null so defaults are loaded
 			
-			initCurrentLevel();
-			
-			addChild(levelScreen);
-			levelScreen.resumeFromMenu();
+			resumeGame(evt);
 		}
 		
+		//Resume game, first remove home screen
 		private function resumeGame(evt:LanderEvent):void {
 			if (this.contains(homeScreen)) {
 				removeChild(homeScreen);
@@ -68,13 +77,13 @@ package lander{
 				homeScreen = null; 
 			}
 			
-			if (levelScreen == null)
-				initCurrentLevel();
+			initCurrentLevel();
 			
 			addChild(levelScreen);
 			
 			levelScreen.resumeFromMenu();
 		}
+		
 		
 		private function initCurrentLevel():void {
 			

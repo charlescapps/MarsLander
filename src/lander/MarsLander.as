@@ -4,15 +4,15 @@ package lander{
 	import vector.*;
 	import flash.events.KeyboardEvent;
 	import flash.events.Event;
-	import flash.ui.Keyboard; 
 	import flash.geom.*;
+	import com.pblabs.engine.core.InputKey; 
 	
 	/**
 	 * @author charles
 	 */
 	public class MarsLander extends Sprite {
 		
-		private var imageFactory:ImageFactory; 
+		private var imageFactory:ImageFactory = ImageFactory.getInstance(); 
 		private var currentImage:Bitmap; 
 		
 		private var THRUST:Number;	//Units of pixels per frame^2
@@ -36,10 +36,10 @@ package lander{
 		//public functions
 		
 		public function MarsLander() {
+			
 			trace("Entering MarsLander constructor...");
 			//Initialize vars
-			
-			imageFactory = ImageFactory.getInstance();
+
 			currentImage = imageFactory.landerImg; 
 			addChild(currentImage);
 			
@@ -228,17 +228,17 @@ package lander{
 		
 		private function keyDown(evt:KeyboardEvent):void {
 			switch(evt.keyCode) {
-				case (Keyboard.UP): 
+				case (InputKey.UP.keyCode): 
 					startThrusting(); break; 
-				case (Keyboard.DOWN): 
+				case (InputKey.DOWN.keyCode): 
 					startThrustingDown(); break; 
-				case (Keyboard.LEFT): 
+				case (InputKey.LEFT.keyCode): 
 					startThrustingLeft(); break;
-				case (Keyboard.RIGHT): 
+				case (InputKey.RIGHT.keyCode): 
 					startThrustingRight(); break;
-				case (Constants.A_KEY):
+				case (InputKey.A.keyCode):
 					isRotatingCCW = true; break;
-				case (Constants.D_KEY): 
+				case (InputKey.D.keyCode): 
 					isRotatingCW = true; break; 
 			}
 				
@@ -246,17 +246,17 @@ package lander{
 		
 		private function keyUp(evt:KeyboardEvent):void {
 			switch (evt.keyCode) {
-				case (Keyboard.UP):
+				case (InputKey.UP.keyCode):
 					stopThrusting(); break; 
-				case (Keyboard.DOWN):
+				case (InputKey.DOWN.keyCode):
 					stopThrustingDown(); break; 
-				case (Keyboard.LEFT):
+				case (InputKey.LEFT.keyCode):
 					stopThrustingLeft(); break; 
-				case (Keyboard.RIGHT):
+				case (InputKey.RIGHT.keyCode):
 					stopThrustingRight(); break; 
-				case (Constants.A_KEY): 
+				case (InputKey.A.keyCode): 
 					isRotatingCCW = false; break ;
-				case (Constants.D_KEY): 
+				case (InputKey.D.keyCode): 
 					isRotatingCW = false; break; 
 			}
 		}

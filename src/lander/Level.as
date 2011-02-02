@@ -9,7 +9,7 @@ package lander {
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.geom.*;
-	import levelMaker.CCButton; 
+	import ccui.CCButton; 
 
 	/**
 	 * @author charles
@@ -37,8 +37,8 @@ package lander {
 		private var levelData:LevelData; //The data for the level (shape of ground, location of landing pad)
 		private var gameOver:Boolean = false; 
 		
-		private var homeButton:CCButton = new CCButton("Back Home", 0xff8888, 0xff0000, 30, 0x00ff00, new Rectangle(100, 25, 200, 50), 0x666666);
-		private var pauseButton:CCButton = new CCButton("Pause", 0xff8888, 0xff0000, 30, 0x00ff00, new Rectangle(100, 25, 200, 50), 0x666666);
+		private var homeButton:CCButton = new CCButton("Back Home", 0xff8888, 0xff0000, 0x666666, 30, 0x00ff00, new Rectangle(100, 25, 200, 50));
+		private var pauseButton:CCButton = new CCButton("Pause", 0xff8888, 0xff0000, 0x666666, 30, 0x00ff00, new Rectangle(100, 25, 200, 50));
 		
 		public function Level() {
 			
@@ -95,6 +95,9 @@ package lander {
 				
 			if (homeButton.hasEventListener(MouseEvent.CLICK))
 				homeButton.removeEventListener(MouseEvent.CLICK, onClickHome);
+				
+			pauseButton.dispose();
+			homeButton.dispose();
 				
 		}
 		

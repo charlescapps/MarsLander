@@ -43,6 +43,8 @@ package lander{
 			currentImage = imageFactory.landerImg; 
 			addChild(currentImage);
 			
+			currentImage.smoothing = true; //Turn on smoothing for image
+			
 			setHighGravity(Settings.gravityHigh); //Sets thrust and gravity based on Settings variable
 			
 			velocity = new vector2d(0, 0);
@@ -55,6 +57,7 @@ package lander{
 							new Point(Constants.LANDER_WIDTH, 0), 
 							new Point(0, Constants.LANDER_HEIGHT), 
 							new Point(Constants.LANDER_WIDTH, Constants.LANDER_HEIGHT));
+			
 	
 		}
 		

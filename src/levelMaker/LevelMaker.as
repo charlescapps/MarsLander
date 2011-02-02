@@ -11,6 +11,7 @@ package levelMaker {
 	import flash.events.KeyboardEvent;
 	import flash.geom.*; 
 	import vector.*;  	
+	import ccui.*;
 	
 	
 
@@ -21,7 +22,7 @@ package levelMaker {
 	public class LevelMaker extends Sprite {
 		
 		private var ld:LevelData;
-		private var groundColorInput:ColorInput; 
+		private var groundColorInput:CCColorInput; 
 		private var addPointsButton:CCToggleButton; 
 		private var completeButton:CCButton; 
 		
@@ -37,7 +38,7 @@ package levelMaker {
 			addPoints = false; 
 			
 			//Set up color input boxes
-			groundColorInput = new ColorInput("Ground color:", 0x000000, "000000");
+			groundColorInput = new CCColorInput("Ground color:", 0x000000, "000000");
 			groundColorInput.x = 100; 
 			groundColorInput.y = 50; 
 			groundColorInput.addEventListener(KeyboardEvent.KEY_UP, keyUpGroundColor );
@@ -48,12 +49,12 @@ package levelMaker {
 			
 			//Set up buttons
 			
-			addPointsButton = new CCToggleButton("ADD POINTS: NO", "ADD POINTS: YES", 0xaaffaa, 0x11ff11, 24, 0x000000, 
-													new Rectangle(400, 50, 225, 50), 0xaaaaff, true);
+			addPointsButton = new CCToggleButton("ADD POINTS: NO", "ADD POINTS: YES", 0xaaffaa, 0x11ff11, 0xaaaaff, 24, 0x000000, 
+													new Rectangle(400, 50, 225, 50), true);
 			
 			
-			completeButton = new CCButton("COMPLETE", 0xaaffaa, 0x11ff11, 24, 0x000000, 
-											new Rectangle(650, 50, 225, 50), 0xaaaaff, true );
+			completeButton = new CCButton("COMPLETE", 0xaaffaa, 0x11ff11, 0xaaaaff, 24, 0x000000, 
+											new Rectangle(650, 50, 225, 50), true );
 											
 			addPointsButton.addEventListener(MouseEvent.CLICK, toggleClick);
 			completeButton.addEventListener(MouseEvent.CLICK, completeClick);

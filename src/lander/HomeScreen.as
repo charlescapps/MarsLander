@@ -3,7 +3,8 @@ package lander {
 	import flash.display.Sprite;
 	import flash.display.Bitmap; 
 	import flash.geom.Rectangle; 
-	import levelMaker.CCButton; 
+	import ccui.CCButton;
+	import ccui.CCModalDialog;
 	import landerEvents.*;
 
 	/**
@@ -18,10 +19,12 @@ package lander {
 		private const imageFactory:ImageFactory = ImageFactory.getInstance();
 		private var homeImage:Bitmap = imageFactory.homeScreenImg;  
 		
-		private var newGameButton:CCButton = new CCButton("New Game", 0xff8888, 0xff0000, 30, 0x00ff00, new Rectangle(512 - 100, 384 - 25, 200, 50), 0x666666); 
-		private var resumeButton:CCButton = new CCButton("Resume Game", 0x666666, 0x666666, 30, 0x00ff00, new Rectangle(512 - 125, 384 + 50, 250, 50), 0x666666);
-		private var settingsButton:CCButton = new CCButton("Settings", 0xff8888, 0xff0000, 30, 0x00ff00, new Rectangle(512 - 100, 384 + 125, 200, 50), 0x666666);
+		private var newGameButton:CCButton = new CCButton("New Game", 0xff8888, 0xff0000, 0x666666, 30, 0x00ff00, new Rectangle(512 - 100, 384 - 125, 200, 50)); 
+		private var resumeButton:CCButton = new CCButton("Resume Game", 0x666666, 0x666666, 0x666666, 30, 0x00ff00, new Rectangle(512 - 125, 384 - 50, 250, 50));
+		private var settingsButton:CCButton = new CCButton("Settings", 0xff8888, 0xff0000, 0x666666, 30, 0x00ff00, new Rectangle(512 - 100, 384 + 25, 200, 50));
+		private var controlsButton:CCButton = new CCButton("Controls",  0xff8888, 0xff0000, 0x666666, 30, 0x00ff00, new Rectangle(512 - 100, 384 + 100, 200, 50));
 		
+		private var controlsDialog:CCModalDialog = new CCModalDialog(300, Constants.CONTROLS_HTML, "Bookman Old Style", 26, 0x000000, 0xffffff , 0x444444, .9, 0xdd0000 );
 		
 		
 		public function HomeScreen() {
@@ -29,9 +32,12 @@ package lander {
 			addChild(newGameButton);
 			addChild(settingsButton); 
 			addChild(resumeButton);
+			addChild(controlsButton);
+			
 			
 			settingsButton.addEventListener(MouseEvent.CLICK, clickSettings);
 			newGameButton.addEventListener(MouseEvent.CLICK, clickNewGame);
+			controlsButton.addEventListener(MouseEvent.CLICK, clickControls);
 			
 			if (resumeButtonActive) {
 				activateResumeButton();
@@ -55,7 +61,12 @@ package lander {
 				
 			if (resumeButton.hasEventListener(MouseEvent.CLICK))
 				resumeButton.removeEventListener(MouseEvent.CLICK, clickResume); 
-				
+			
+			newGameButton.dispose();	
+			resumeButton.dispose();
+			settingsButton.dispose();
+			controlsDialog.dispose();
+			
 			homeImage = null; 
 		}
 		
@@ -69,6 +80,11 @@ package lander {
 		
 		private function clickNewGame(evt:MouseEvent):void {
 			dispatchEvent(new LanderEvent(LanderEvent.START_GAME));
+		}
+		
+		private function clickControls(evt:MouseEvent):void {
+			addChild(controlsDialog);
+			controlsDialog.popup();
 		}
 	}
 }

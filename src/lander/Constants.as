@@ -2,8 +2,7 @@ package lander {
 	/**
 	 * @author charles
 	 */
-	 
-	import vector.*;  
+	  
 	 
 	public class Constants {
 		public static const STAGE_WIDTH:int = 1024; 
@@ -26,6 +25,15 @@ package lander {
 		public static const DIFFICULTY_NORMAL:String = "NORMAL";
 		public static const DIFFICULTY_HARD:String = "HARD";
 		public static const DIFFICULTY_IMPOSSIBLE:String = "IMPOSSIBLE";
+		
+		public static const CONTROLS_HTML:String = 
+													"<b>Controls:</b></font> \n\n" +
+													"<b>UP:</b>&nbsp; <i>Thrust</i> \n" +
+													"<b>LEFT:</b>&nbsp; <i>Thrust Left</i> \n" +
+													"<b>RIGHT:</b>&nbsp; <i>Thrust Right</i> \n" +
+													"<b>A:</b>&nbsp; <i>Rotate Left</i> \n" +
+													"<b>D:</b>&nbsp; <i>Rotate Right</i> \n" +
+													"&nbsp;"; 
 		
 	}
 }

@@ -4,9 +4,9 @@ package lander {
 	import flash.display.Bitmap; 
 	import flash.geom.*;
 	import flash.events.MouseEvent;
-	import levelMaker.CCButton; 
-	import levelMaker.CCToggleButton; 
-	import levelMaker.CCScrollBox; 
+	import ccui.CCButton; 
+	import ccui.CCToggleButton; 
+	import ccui.CCScrollBox; 
 
 	/**
 	 * @author charles
@@ -17,8 +17,8 @@ package lander {
 		private const imageFactory:ImageFactory = ImageFactory.getInstance();
 		private var settingsImage:Bitmap = imageFactory.settingsScreenImg;  
 		
-		private var backToHomeButton:CCButton = new CCButton("Back", 0xff8888, 0xff0000, 30, 0x00ff00, new Rectangle(100, 50, 200, 50), 0x666666); 
-		private var gravityButton:CCToggleButton = new CCToggleButton("Gravity: LOW", "Gravity: HIGH", 0xff8888, 0xff0000, 30, 0x000000, new Rectangle(512 - 100, 300, 200, 50), 0x666666);
+		private var backToHomeButton:CCButton = new CCButton("Back", 0xff8888, 0xff0000, 0x666666, 30, 0x00ff00, new Rectangle(100, 50, 200, 50)); 
+		private var gravityButton:CCToggleButton = new CCToggleButton("Gravity: LOW", "Gravity: HIGH", 0xff8888, 0xff0000, 0x666666, 30, 0x000000, new Rectangle(512 - 100, 300, 200, 50));
 		private var scrollImgs:Vector.<Bitmap> = new Vector.<Bitmap>(); 
 		private var scrollVals:Array = new Array();
 		private var difficultyScrollBox:CCScrollBox; 
@@ -30,7 +30,8 @@ package lander {
 			difficultyScrollBox = new CCScrollBox(new Point(512-100, 400), new Rectangle(0, 0, 200, 50), imageFactory.upScrollImg, imageFactory.downScrollImg, 
 										scrollImgs, scrollVals, 4, 0xff2222);
 			
-			
+			difficultyScrollBox.selectIndex(scrollVals.indexOf(Settings.difficulty)); //Select index for current Difficulty setting
+			difficultyScrollBox.scrollToIndex(scrollVals.indexOf(Settings.difficulty)); //Scroll to this index
 			
 			addChild(settingsImage);
 			addChild(backToHomeButton);
@@ -45,6 +46,7 @@ package lander {
 			
 			gravityButton.addEventListener(MouseEvent.CLICK, toggleGravity);
 			backToHomeButton.addEventListener(MouseEvent.CLICK, clickHomeButton);
+			difficultyScrollBox.addEventListener(MouseEvent.CLICK, grabDifficultySetting);
 		}
 		
 		public function dispose():void {
@@ -54,11 +56,26 @@ package lander {
 			if (backToHomeButton.hasEventListener(MouseEvent.CLICK))
 				backToHomeButton.removeEventListener(MouseEvent.CLICK, clickHomeButton);
 				
+			if (difficultyScrollBox.hasEventListener(MouseEvent.CLICK))
+				difficultyScrollBox.removeEventListener(MouseEvent.CLICK, grabDifficultySetting);
+				
+			backToHomeButton.dispose();
+			gravityButton.dispose();
+			difficultyScrollBox.dispose();
+				
 			removeChild(settingsImage);
 			removeChild(backToHomeButton);
 			removeChild(gravityButton);
+			removeChild(difficultyScrollBox);
 			
 			settingsImage = null; 
+			
+			
+		}
+		
+		private function grabDifficultySetting(evt:MouseEvent):void {
+			Settings.difficulty = difficultyScrollBox.currentValue as String; 
+			trace("Difficulty setting: " + Settings.difficulty );
 		}
 		
 		private function toggleGravity(evt:MouseEvent):void {

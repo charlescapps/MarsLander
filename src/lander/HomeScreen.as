@@ -61,11 +61,26 @@ package lander {
 				
 			if (resumeButton.hasEventListener(MouseEvent.CLICK))
 				resumeButton.removeEventListener(MouseEvent.CLICK, clickResume); 
+				
+			if (controlsButton.hasEventListener(MouseEvent.CLICK))
+				controlsButton.removeEventListener(MouseEvent.CLICK, clickControls); 
 			
 			newGameButton.dispose();	
 			resumeButton.dispose();
 			settingsButton.dispose();
+			controlsButton.dispose();
 			controlsDialog.dispose();
+			
+			removeChild(newGameButton);
+			removeChild(resumeButton);
+			removeChild(settingsButton); 
+			removeChild(controlsButton);
+			
+			if (contains(controlsDialog))
+				removeChild(controlsDialog);
+			
+			newGameButton = resumeButton = settingsButton = controlsButton = null; 
+			controlsDialog = null; 
 			
 			homeImage = null; 
 		}

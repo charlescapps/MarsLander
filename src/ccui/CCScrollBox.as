@@ -40,12 +40,12 @@ package ccui{
 				currentValue = values[0];
 			
 			//Just copy values/referaddEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);ences over
-			p_scrollExtent = scrollExtent.clone(); 
+			p_scrollExtent = scrollExtent; 
 			p_upImg = upImg; 
 			p_downImg = downImg; 
-			p_imageVec = imageVec.slice(); 
+			p_imageVec = imageVec; 
 			p_nudgePixels = nudgePixels; 
-			p_values = values.slice(); 
+			p_values = values; 
 			p_glowColor = glowColor; 
 			
 			//Create glow filter based on given color
@@ -102,6 +102,9 @@ package ccui{
 			
 			if (stage!= null)
 				stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+				
+			p_downImg = p_upImg = null; 
+			glowFilter = null; 
 		}
 		
 		public function selectIndex(index:int):void {

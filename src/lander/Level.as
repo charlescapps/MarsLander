@@ -1,4 +1,5 @@
 package lander {
+	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import vector.*;
 	import flash.text.TextField; 
@@ -29,6 +30,8 @@ package lander {
 		private var ground:Sprite; 		   //Sprite displaying the ground
 		private var landingPad:Sprite; 	   //Sprite displaying the landing pad
 		
+		private var seeds:Vector.<Seed> = new Vector.<Seed>(); //All seeds currently on stage (drawn into sprite after growing).
+		
 		private var messageBox:TextField;  //TextField that displays a message for the user
 		private var speedBox:TextField;    //TextField that displays your current speed
 		private var textFormat:TextFormat; //Format of the messageBox
@@ -36,6 +39,7 @@ package lander {
 		
 		private var levelData:LevelData; //The data for the level (shape of ground, location of landing pad)
 		private var gameOver:Boolean = false; 
+		private var wonGame:Boolean = false; 
 		
 		private var homeButton:CCButton = new CCButton("Back Home", 0xff8888, 0xff0000, 0x666666, 30, 0x00ff00, new Rectangle(100, 25, 200, 50));
 		private var pauseButton:CCButton = new CCButton("Pause", 0xff8888, 0xff0000, 0x666666, 30, 0x00ff00, new Rectangle(100, 25, 200, 50));
@@ -87,8 +91,8 @@ package lander {
 			if (hasEventListener(Event.ENTER_FRAME))
 				removeEventListener(Event.ENTER_FRAME, enterFrame);
 				
-			if (hasEventListener(LanderEvent.HIT_GROUND_EVENT))
-				removeEventListener(LanderEvent.HIT_GROUND_EVENT, hitGround);
+			if (hasEventListener(KeyboardEvent.KEY_DOWN))
+				removeEventListener(KeyboardEvent.KEY_DOWN, pressSpace);
 				
 			if (pauseButton.hasEventListener(MouseEvent.CLICK))
 				pauseButton.removeEventListener(MouseEvent.CLICK, onClickPause);
@@ -96,8 +100,8 @@ package lander {
 			if (homeButton.hasEventListener(MouseEvent.CLICK))
 				homeButton.removeEventListener(MouseEvent.CLICK, onClickHome);
 				
-			pauseButton.dispose();
-			homeButton.dispose();
+			pauseButton.dispose(); //Remove listeners inside pause button
+			homeButton.dispose();  //""               inside home button
 				
 		}
 		
@@ -106,8 +110,9 @@ package lander {
 			//Add time-based events if the game isn't over
 			if (!gameOver) {
 				addEventListener(Event.ENTER_FRAME, enterFrame);
-				addEventListener(LanderEvent.HIT_GROUND_EVENT, hitGround);
+				addEventListener(KeyboardEvent.KEY_DOWN, pressSpace);
 				marsLander.start();
+				marsLander.draw();
 				
 				addChild(pauseButton);
 				pauseButton.addEventListener(MouseEvent.CLICK, onClickPause);
@@ -118,45 +123,37 @@ package lander {
 				
 				addChild(homeButton);
 				homeButton.addEventListener(MouseEvent.CLICK, onClickHome);
+				
+				if (wonGame) 
+					marsLander.draw();
 			}
-			
-			
 		}
 		
+		public function pressSpace(evt:KeyboardEvent):void {
+			var s:Seed = marsLander.spawnSeed(); 
+			seeds.push(s);
+		}
+		
+		//Just a helper function to put a box in the center of the screen based on its current size
 		private function centerTextField(aTextField:TextField):void {
 			aTextField.x = stage.stageWidth / 2 - aTextField.width/2;  
 			aTextField.y = stage.stageHeight / 4;
 		}
 		
-		
-		private function hitGround(evt:LanderEvent):void {
-			var angleDiff:Number = Math.abs(marsLander.rotation*Math.PI / 180.0 - vector2d.getAngle(levelData.landPt1, levelData.landPt2));
-			trace("Angle diff: " + angleDiff);
-			trace("Max angle: " + MAX_ROTATION);
+		//Event that occurs to determine if you won the game after hitting the ground sprite
+		private function hitGround():void {
 			
-			if (angleDiff > MAX_ROTATION) {
-				messageBox.text = "You crashed and died cause your angle was off!"; 
-			}
-			else if (marsLander.vel.magnitude() > MAX_SPEED) 
-				 {
-				messageBox.text = "You crashed and died cause you were going too fast!"; 
-				trace("You crashed!"); 
-			}
-			else if (!landingPad.hitTestPoint(marsLander.localToGlobal(marsLander.hitPoints[2]).x, marsLander.localToGlobal(marsLander.hitPoints[2]).y, true) 
-					&& !landingPad.hitTestPoint(marsLander.localToGlobal(marsLander.hitPoints[3]).x, marsLander.localToGlobal(marsLander.hitPoints[3]).y, true)) {
-					messageBox.text = "Your legs didn't hit the landing area!";
-					trace ("Legs didn't hit landing area!");
-				}
-			else {
-				messageBox.text = "You win!"; 
-				trace("You win!");
-			}
+			marsLander.stop();
+			marsLander.explode();
+			
+			removeEventListener(Event.ENTER_FRAME, enterFrame);
+			
+			messageBox.text = "You hit the rough terrain and exploded!"; 
+			trace("You hit the ground and exploded!");
+		
 			
 			centerTextField(messageBox); 
 			addChild(messageBox);
-				
-			removeEventListener(Event.ENTER_FRAME, enterFrame);
-			marsLander.stop();
 			
 			if (contains(pauseButton)) {
 				removeChild(pauseButton);
@@ -170,23 +167,96 @@ package lander {
 			
 		}
 		
+		private function hitLandingPad():void {
+			
+			marsLander.stop();
+			
+			//Get difference in angle between lander and landing pad
+			var angleDiff:Number = Math.abs(marsLander.rotation*Math.PI / 180.0 - vector2d.getAngle(levelData.landPt1, levelData.landPt2));
+			
+			removeEventListener(Event.ENTER_FRAME, enterFrame);
+			
+			if (angleDiff > MAX_ROTATION) {
+				messageBox.text = "You crashed and died cause your angle was off!"; 
+				marsLander.explode();
+				
+			}
+			else if (marsLander.vel.magnitude() > MAX_SPEED) 
+				 {
+				messageBox.text = "You crashed and died cause you were going too fast!"; 
+				marsLander.explode();
+				trace("You crashed!"); 
+			}
+
+			else {
+				messageBox.text = "You win!"; 
+				wonGame = true; 
+				trace("You win!");
+			}
+			
+			centerTextField(messageBox); 
+			addChild(messageBox);
+			
+			if (contains(pauseButton)) {
+				removeChild(pauseButton);
+				pauseButton.removeEventListener(MouseEvent.CLICK, onClickPause);
+			}
+			
+			addChild(homeButton);
+			homeButton.addEventListener(MouseEvent.CLICK, onClickHome);
+			
+			gameOver = true; 
+			
+		}
+		
+		private function didHitGround():Boolean {
+			for each (var pt:Point in marsLander.hitPoints)  {
+				
+				if (ground.hitTestPoint(marsLander.localToGlobal(pt).x, marsLander.localToGlobal(pt).y, true)) 
+					return true; 
+			}
+			
+			return false; 
+		}
+		
+		private function didHitLandingPad():Boolean {
+
+			for each (var pt:Point in marsLander.hitPoints)  {
+				
+				if (landingPad.hitTestPoint(marsLander.localToGlobal(pt).x, marsLander.localToGlobal(pt).y, true)) 
+					return true; 
+			}
+			
+			return false; 
+		}
+		
+		private function seedHitGround():int {
+			for (var i:int = 0; i < seeds.length; i++) {
+				
+			}
+		}
+		
+		//Write HTML giving current speed to speedBox and check if the mars lander has collided with anything
 		private function enterFrame(evt:Event):void {
 			
 			speedBox.htmlText = "<b>Keep your speed under 10 m/s!</b>\n" 
 								+ "<i>Current speed:</i> " + marsLander.vel.magnitude().toFixed(2) + " m/s"; 
 			
-			for each (var pt:Point in marsLander.hitPoints)  {
-				if (ground.hitTestPoint(marsLander.localToGlobal(pt).x, marsLander.localToGlobal(pt).y, true)) 
-					dispatchEvent(new LanderEvent(LanderEvent.HIT_GROUND_EVENT));
+			if (didHitGround())
+				hitGround();
 					
-				else if (landingPad.hitTestPoint(marsLander.localToGlobal(pt).x, marsLander.localToGlobal(pt).y, true)) 
-					dispatchEvent(new LanderEvent(LanderEvent.HIT_GROUND_EVENT));
-					
-				}
+			else if (didHitLandingPad()) 
+				hitLandingPad();
 				
+			if (marsLander.x > Constants.STAGE_WIDTH ) 
+				marsLander.x = marsLander.x - Constants.STAGE_WIDTH;
 			
+			else if (marsLander.x < 0)
+				marsLander.x = Constants.STAGE_WIDTH + marsLander.x;
+					
 		}
 		
+		//Load geometry of level from LevelData object and draw to screen
 		public function loadLevel(ld:LevelData):void {
 			this.levelData = ld; 
 			
@@ -194,8 +264,6 @@ package lander {
 			
 			ground.graphics.lineStyle(ld.groundLineThickness, ld.groundLineColor);
 			ground.graphics.moveTo(ld.groundPoints[0].x, ld.groundPoints[0].y);
-			
-			trace("Ground color: " + ld.groundColor.toString(16));
 			
 			for (var i:int = 1; i < ld.groundPoints.length; i++) 
 				ground.graphics.lineTo(ld.groundPoints[i].x, ld.groundPoints[i].y);
@@ -212,6 +280,7 @@ package lander {
 			
 		}
 		
+		//Load state of level (i.e. mars lander position), etc.
 		public function loadLevelState(ls:LevelState):void {
 			if (ls!=null) {
 				marsLander.x = ls.landerPosition.x; 
@@ -219,13 +288,14 @@ package lander {
 				marsLander.rotation = ls.landerRotation; 
 				marsLander.vel = ls.landerVelocity; 
 				gameOver = ls.gameOver; 
+				wonGame = ls.wonGame;
 				messageBox.text = ls.messageStr;
 				speedBox.text = ls.speedBoxStr; 
 			}
 		}
 		
 		public function dumpLevelState():LevelState {
-			return new LevelState(new vector2d(marsLander.x, marsLander.y), marsLander.vel, marsLander.rotation, gameOver, messageBox.text, speedBox.text);
+			return new LevelState(new vector2d(marsLander.x, marsLander.y), marsLander.vel, marsLander.rotation, gameOver, wonGame, messageBox.text, speedBox.text);
 		}
 		
 		private function onClickHome(evt:MouseEvent):void {
@@ -241,6 +311,17 @@ package lander {
 			removeAllListeners(); //removes all event listeners
 			
 			marsLander.dispose();
+			
+			if (contains(marsLander))
+				removeChild(marsLander);
+			if (contains(homeButton)) 
+				removeChild(homeButton);
+			if (contains(pauseButton))
+				removeChild(pauseButton);
+			marsLander = null; 
+			homeButton = pauseButton = null; 
+			ground = landingPad = null; 
+			messageBox = speedBox = null; 
 			
 			
 		}

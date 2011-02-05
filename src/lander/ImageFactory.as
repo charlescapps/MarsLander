@@ -5,34 +5,37 @@ package lander {
 	 */
 	public class ImageFactory {
 		[Embed(source="../../resources/lander.png")]
-		private var LanderImg:Class; 
+		private static var LanderImg:Class; 
 		
 		[Embed(source="../../resources/lander_thrust.png")]
-		private var LanderThrustImg:Class; 
+		private static var LanderThrustImg:Class; 
 		
 		[Embed(source="../../resources/home_screen.png")]
-		private var HomeScreenImg:Class; 
+		private static var HomeScreenImg:Class; 
 		
 		[Embed(source="../../resources/settings_screen.png")]
-		private var SettingsScreenImg:Class; 
+		private static var SettingsScreenImg:Class; 
 		
 		[Embed(source="../../resources/easy.png")]
-		private var EasyScrollImg:Class; 
+		private static var EasyScrollImg:Class; 
 		
 		[Embed(source="../../resources/normal.png")]
-		private var NormalScrollImg:Class; 
+		private static var NormalScrollImg:Class; 
 		
 		[Embed(source="../../resources/hard.png")]
-		private var HardScrollImg:Class; 
+		private static var HardScrollImg:Class; 
 		
 		[Embed(source="../../resources/impossible.png")]
-		private var ImpossibleScrollImg:Class; 
+		private static var ImpossibleScrollImg:Class; 
 		
 		[Embed(source="../../resources/up.png")]
-		private var UpScrollImg:Class; 
+		private static var UpScrollImg:Class; 
 		
 		[Embed(source="../../resources/down.png")]
-		private var DownScrollImg:Class; 
+		private static var DownScrollImg:Class; 
+		
+		[Embed(source="../../resources/spritesheets/marslander_sprite_sheet.png")]
+		private static var LanderSpriteSheet:Class; 
 		
 		private static var theInstance:ImageFactory = null;
 		
@@ -84,6 +87,10 @@ package lander {
 		
 		public function get downScrollImg():Bitmap {
 			return new DownScrollImg() as Bitmap; 
+		}
+		
+		public function get landerSpriteSheet():Bitmap {
+			return new LanderSpriteSheet() as Bitmap; 
 		}
 		
 		public function toString():String {

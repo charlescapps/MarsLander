@@ -43,6 +43,9 @@ package ccui {
 		public function dispose():void {
 			if (hasEventListener(MouseEvent.CLICK))
 				removeEventListener(MouseEvent.CLICK, onClickOutside);
+				
+			mainText = null; 
+			theFormat = null; 
 		}
 		
 		private function onClickOutside(evt:MouseEvent):void {
